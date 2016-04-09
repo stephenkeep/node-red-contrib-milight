@@ -2,6 +2,11 @@
   "name": "node-red-contrib-milight",
   "version": "0.0.3",
   "description": "A Node-RED node to control the MiLight family (limitless led, easybulb) of light globes.  A wrapper for https://github.com/oeuillot/node-milight.git",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predev": "npm i -g",
+    "dev": "node-red -v"
+  },
   "license": "Apache-2.0",
   "keywords": [
     "node-red",
@@ -11,9 +16,7 @@
   ],
   "node-red": {
     "nodes": {
-      "MiLightRGB": "MiLight.js",
-      "MiLightWhite": "MiLight.js",
-      "MiLightPower": "MiLight.js"
+      "MiLight": "MiLight.js"
     }
   },
   "dependencies": {

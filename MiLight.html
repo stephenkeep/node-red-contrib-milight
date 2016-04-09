@@ -1,7 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('MiLightRGB',{
-        category: 'output',
-        color: '#a6bbcf',
+        category: 'lights',
+        color: '#FF6600',
         defaults: {
             name: {value:"MiLight RGB"},
             zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
@@ -10,14 +10,14 @@
         },
         inputs:1,
         outputs:0,
-        icon: "file.png",
+        icon: "light.png",
         label: function() {
             return this.name||"MiLight RGB";
         }
     });
     RED.nodes.registerType('MiLightWhite',{
-        category: 'output',
-        color: '#a6bbcf',
+        category: 'lights',
+        color: '#FF6600',
         defaults: {
             name: {value:"MiLight White"},
             zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
@@ -27,14 +27,14 @@
         },
         inputs:1,
         outputs:0,
-        icon: "file.png",
+        icon: "light.png",
         label: function() {
             return this.name||"MiLight White";
         }
     });
     RED.nodes.registerType('MiLightPower',{
-        category: 'output',
-        color: '#a6bbcf',
+        category: 'lights',
+        color: '#FF6600',
         defaults: {
             name: {value:"MiLight Power"},
             zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
@@ -44,7 +44,7 @@
         },
         inputs:1,
         outputs:0,
-        icon: "file.png",
+        icon: "light.png",
         label: function() {
             return this.name||"MiLight Power";
         }
