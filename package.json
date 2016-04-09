@@ -7,21 +7,6 @@
     "predev": "npm i -g",
     "dev": "node-red -v"
   },
-  "license": "Apache-2.0",
-  "keywords": [
-    "node-red",
-    "milight",
-    "limitless led",
-    "easybulb"
-  ],
-  "node-red": {
-    "nodes": {
-      "MiLight": "MiLight.js"
-    }
-  },
-  "dependencies": {
-    "milight": "1.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/stephenkeep/node-red-contrib-milight.git"
@@ -36,5 +21,20 @@
     "name": "Daniel Thomas",
     "email": "daniel@networklighthouse.com",
     "url": "https://github.com/Daniel-t"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "node-red",
+    "milight",
+    "limitless led",
+    "easybulb"
+  ],
+  "node-red": {
+    "nodes": {
+      "MiLight": "MiLight.js"
+    }
+  },
+  "dependencies": {
+    "node-milight-promise": "0.0.6"
   }
 }

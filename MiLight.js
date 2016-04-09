@@ -1,60 +1,51 @@
+var Milight = require('node-milight-promise').MilightController;
+var commands = require('node-milight-promise').commands;
+
 module.exports = function(RED) {
-    function MiLightPower(config) {
-	RED.nodes.createNode(this,config);
-	var node = this;
-   	var MiLight = require('milight');
-	var milight = new MiLight({
-		host: config.ip,
-		broadcast: config.broadcast
-	});
-   	var zone = config.zone;
-	this.on('input', function(msg) {
-		if (msg.payload == "off") milight.zone(zone).off();
-		if (msg.payload == "on") milight.zone(zone).on();
-	});
-    };
- RED.nodes.registerType("MiLightPower",MiLightPower);
+    function node (config) {
+        
+        RED.nodes.createNode(this, config);
+        var node = this;
+                        
+        this.on('input', function(msg) {
+            
+            var light = new Milight({
+                    ip: config.ip,
+                    delayBetweenCommands: 70,
+                    commandRepeat: config.bulbtype === 'rgbw' ? 2 : 1
+                }),
+                zone = config.zone,
+                bulb = config.bulbtype;
 
-    function MiLightRGB(config) {
-	RED.nodes.createNode(this,config);
-	var node = this;
-   	var MiLight = require('milight');
-
-	var milight = new MiLight({
-                host: config.ip,
-                broadcast: config.broadcast
+            //i know this is private but its the only way i could get it to work
+            light._broadcastMode = config.broadcast;
+            
+            if (msg.payload === 'off') light.sendCommands(commands[bulb].off(zone));
+            if (msg.payload === 'on') light.sendCommands(commands[bulb].on(zone));
+            
+            if (bulb === 'rgbw') {
+                
+                if (msg.payload === 'disco') {
+                    
+                    light.sendCommands(commands.rgbw.on(zone));
+                    for (var x = 0; x < 256; x += 5) {
+                        light.sendCommands(commands.rgbw.hue(x));
+                        light.pause(100);
+                    }
+                }
+                
+                if (msg.payload === 'white') light.sendCommands(commands.rgbw.on(zone), commands.rgbw.brightness(100), commands.rgbw.whiteMode(zone));
+                
+                if (!isNaN(msg.payload)) {
+                    light.sendCommands(commands.rgbw.hue(msg.payload));
+                }
+            }
+            
+            light.close().then(function () {
+                
+            });
         });
-        var zone = config.zone;
-
-
-	this.on('input', function(msg) {
-		if (typeof msg.payload == "string") {	
-			milight.zone(zone).rgb(msg.payload);
-		} else {
-			milight.zone(zone).rgb(msg.payload.rgb || "#FFFFFF");
-			milight.zone(zone).brightness(msg.payload.brightness) || 100;
-		}
-	});
     };
- RED.nodes.registerType("MiLightRGB",MiLightRGB);
-
-    function MiLightWhite(config) {
-	RED.nodes.createNode(this,config);
-	var node = this;
-   	var MiLight = require('milight');
-	
-	var milight = new MiLight({
-                host: config.ip,
-                broadcast: config.broadcast
-        });
-        var zone = config.zone;
-	
-
-	this.on('input', function(msg) {
-		milight.zone(zone).white(msg.payload);
-	});
-    };
- RED.nodes.registerType("MiLightWhite",MiLightWhite);
-
-
+ 
+    RED.nodes.registerType("MiLight",node);
 }

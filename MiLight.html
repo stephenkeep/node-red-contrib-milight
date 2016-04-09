@@ -1,9 +1,10 @@
 <script type="text/javascript">
-    RED.nodes.registerType('MiLightRGB',{
+    RED.nodes.registerType('MiLight',{
         category: 'lights',
         color: '#FF6600',
         defaults: {
-            name: {value:"MiLight RGB"},
+            name: {value:"MiLight"},
+            bulbtype: {value:"white"},
             zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
             ip: {value:"255.255.255.255"},
             broadcast: {value:true}
@@ -12,109 +13,45 @@
         outputs:0,
         icon: "light.png",
         label: function() {
-            return this.name||"MiLight RGB";
-        }
-    });
-    RED.nodes.registerType('MiLightWhite',{
-        category: 'lights',
-        color: '#FF6600',
-        defaults: {
-            name: {value:"MiLight White"},
-            zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
-            ip: {value:"255.255.255.255"},
-            broadcast: {value:true}
-
-        },
-        inputs:1,
-        outputs:0,
-        icon: "light.png",
-        label: function() {
-            return this.name||"MiLight White";
-        }
-    });
-    RED.nodes.registerType('MiLightPower',{
-        category: 'lights',
-        color: '#FF6600',
-        defaults: {
-            name: {value:"MiLight Power"},
-            zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
-            ip: {value:"255.255.255.255"},
-            broadcast: {value:true}
-
-        },
-        inputs:1,
-        outputs:0,
-        icon: "light.png",
-        label: function() {
-            return this.name||"MiLight Power";
+            return this.name||"MiLight";
         }
     });
 </script>
 
-<script type="text/x-red" data-template-name="MiLightRGB">
+<script type="text/x-red" data-template-name="MiLight">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-zone"><i class="icon-tag"></i>Default Zone</label>
+        <label for="node-input-bulbtype"> Bulb Type</label>
+        <select id="node-input-bulbtype">
+            <option value="white" selected="selected">White</option>
+            <option value="rgbw">Color</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-zone">Default Zone</label>
         <input type="text" id="node-input-zone" placeholder="1">
     </div>
     <div class="form-row">
-        <label for="node-input-ip"><i class="icon-tag"></i>IP Address</label>
+        <label for="node-input-ip">IP Address</label>
         <input type="text" id="node-input-ip" placeholder="255.255.255.255">
     </div>
     <div class="form-row">
-        <label for="node-input-broadcast"><i class="icon-tag"></i>Broadcast</label>
+        <label for="node-input-broadcast">Broadcast</label>
         <input type="checkbox" id="node-input-broadcast" placeholder="false">
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="MiLightRGB">
-    <p>Sets a MiLight globe to the RGB (#000000) value specified in msg.payload</p>
-</script>
-
-<script type="text/x-red" data-template-name="MiLightPower">
-    <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-zone"><i class="icon-tag"></i>Default Zone</label>
-        <input type="text" id="node-input-zone" placeholder="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-ip"><i class="icon-tag"></i>IP Address</label>
-        <input type="text" id="node-input-ip" placeholder="255.255.255.255">
-    </div>
-    <div class="form-row">
-        <label for="node-input-broadcast"><i class="icon-tag"></i>Broadcast</label>
-        <input type="checkbox" id="node-input-broadcast" placeholder="false">
-    </div>
-</script>
-
-<script type="text/x-red" data-help-name="MiLightPower">
-    <p>Sets a MiLight power status to either on/off based on msg.payload (expects "on" or "off" only). "On" will return to last used configuration</p>
-</script>
-<script type="text/x-red" data-template-name="MiLightWhite">
-    <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-zone"><i class="icon-tag"></i>Default Zone</label>
-        <input type="text" id="node-input-zone" placeholder="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-ip"><i class="icon-tag"></i>IP Address</label>
-        <input type="text" id="node-input-ip" placeholder="255.255.255.255">
-    </div>
-    <div class="form-row">
-        <label for="node-input-broadcast"><i class="icon-tag"></i>Broadcast</label>
-        <input type="checkbox" id="node-input-broadcast" placeholder="false">
-    </div>
-</script>
-
-<script type="text/x-red" data-help-name="MiLightWhite">
-    <p>Sets a MiLight globe to white to a brightness value specified in msg.payload (1-100)</p>
+<script type="text/x-red" data-help-name="MiLight">
+    <p>To control the bulb pass the command in to the msg.payload:</p>
+    <ul>
+        <li>'on' - Turns the bulb on (white and color)</li>
+        <li>'off' - Turns the bulb off (white and color)</li>
+        <li>'white' - Sets a color bulb to white</li>
+        <li>'disco' - Cycles a bulb through all the colors</li>
+        <li>100 - Sets the hue of the bulb (this is a number not a string range 0 - 255)</li>
+    </ul>
 </script>
