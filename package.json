@@ -1,9 +1,9 @@
 {
     "name"          : "node-red-contrib-milight",
     "version"       : "0.0.2",
-    "description"   : "A Node-RED node to control the MiLight family (limitless led etc) of light globes.  A wrapper for https://github.com/oeuillot/node-milight.git",
+    "description"   : "A Node-RED node to control the MiLight family (limitless led, easybulb) of light globes.  A wrapper for https://github.com/oeuillot/node-milight.git",
     "license": "Apache-2.0",
-    "keywords": [ "node-red", "milight", "limitless led", "scheduler" ],
+    "keywords": [ "node-red", "milight", "limitless led", "easybulb" ],
     "node-red"      : {
         "nodes"     : {
             "MiLightRGB": "MiLight.js",
@@ -16,8 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Daniel-t/node-red-contrib-milight.git"
+    "url": "https://github.com/stephenkeep/node-red-contrib-milight.git"
   },
+    "contributors": [
+    {
+      "name": "Stephen Keep",
+      "email": "stephenkeep@gmail.com"
+    }
+  ],
     "author": {
         "name": "Daniel Thomas",
         "email": "daniel@networklighthouse.com",
