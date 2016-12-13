@@ -1,5 +1,5 @@
 {
-  "name": "node-red-contrib-milight-wrapper",
+  "name": "node-red-contrib-milight",
   "version": "1.0.2",
   "description": "A Node-RED node to control the MiLight family (limitless led, easybulb) of light.",
   "scripts": {
@@ -9,16 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/alronz/node-red-contrib-milight-wrapper"
+    "url": "https://github.com/stephenkeep/node-red-contrib-milight.git"
   },
   "contributors": [
+    {
+      "name": "Stephen Keep",
+      "email": "stephenkeep@gmail.com"
+    },
     {
       "name": "Bilal Al-Saeedi",
       "email": "bilal_alsaidi@yahoo.com"
     }
   ],
   "author": {
-    "name": "Bilal Al-Saeedi"
+    "name": "Stephen Keep"
   },
   "license": "Apache-2.0",
   "keywords": [
