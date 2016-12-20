@@ -50,8 +50,21 @@
     <ul>
         <li>'on' - Turns the bulb on (white and color)</li>
         <li>'off' - Turns the bulb off (white and color)</li>
-        <li>'white' - Sets a color bulb to white</li>
-        <li>'disco' - Cycles a bulb through all the colors</li>
-        <li>100 - Sets the hue of the bulb (this is a number not a string range 0 - 255)</li>
+        <li>'white' - Sets a color bulb to white (color bulb only)</li>
+        <li>'disco' - Cycles a bulb through all the colors (color bulb only)</li>
+        <li>(a number not a string range 0 - 255) - Sets the hue of the bulb (color bulb only)</li>
+        <li>(a number not a string range 0 - 100) - Sets the brightness of the bulb (color bulb only)</li>
+        <li>'bright_up' - Increase the brightness of the bulb (white bulb only)</li>
+        <li>'bright_down' - Decrease the brightness of the bulb (white bulb only)</li>
+        <li>'cooler' - Make the bulb cooler (white bulb only)</li>
+        <li>'warmer' - Make the bulb warmer (white bulb only)</li>
+        <li>'bright_max' - Make the bulb brightness maximum (white bulb only)</li>
+        <li>'night' - Turn the night mode (white bulb only)</li>
     </ul>
+    <p>Important: for setting the brightness and color of the color bulb, <b>msg.command</b> needs to be set as following</p>
+    <ul>
+        <li>'brightness' - Set brightness</li>
+        <li>'color' - Set color</li>
+    </ul>
+
 </script>
