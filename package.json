@@ -41,6 +41,7 @@
     }
   },
   "dependencies": {
-    "node-milight-promise": "^0.2.1"
+    "color": "^2.0.0",
+    "node-milight-promise": "^0.2.2"
   }
 }

@@ -16,7 +16,7 @@ The following bulb types are supported:
  - RGB WW/CW, aka. "full color" (iBox1/iBox2 bridges)
  - RGB CW bridge light (iBox1 bridge) 
 
-To control the bulb pass the command in to the msg.payload:
+To control the bulb pass the command to `msg.payload` as follows:
    
  - 'on' - Turns the bulb on (all bulb types)
  - 'off' - Turns the bulb off (all bulb types)
@@ -26,18 +26,17 @@ To control the bulb pass the command in to the msg.payload:
  - 'mode' - Cycles through the effect modes (color bulb types only)
  - 'speed_up' - Increase the speed of effect mode (color bulb types, only)
  - 'speed_down' - Decrease the speed of effect mode (color bulb types, only)
- - (a number not a string range 0 - 255) - Sets the hue of the bulb (color bulb types, only)
- - (a number not a string range 0 - 100) - Sets the brightness of the bulb (color bulb types, only)
- - (a number not a string range 0 - 100) - Sets the saturation of the bulb (full color bulb type, only)
  - 'bright_up' - Increase the brightness of the bulb (white bulb, only)
  - 'bright_down' - Decrease the brightness of the bulb (white bulb, only)
  - 'cooler' - Make the bulb cooler (white bulb, only)
  - 'warmer' - Make the bulb warmer (white bulb, only)
  - 'bright_max' - Make the bulb brightness maximum (white bulb, only)
-
-Important: for setting the brightness, color, or saturation of the color bulb, `msg.command` or `msg.topic` needs to be set as follows:
-
- - 'brightness' - Set brightness
- - 'color' - Set color
- - 'saturation' - Set color saturation (full color bulb type, only)
+ - *Number* - If a number is provided the brightness, color, or saturation value of the color bulb can be controlled
+    by assigning a command verb to `msg.command` or `msg.topic` as follows
+     - 'brightness' - Set brightness, `msg.payload` must contain a number in 0 - 100
+     - 'color' - Set color, `msg.payload` must contain a number in 0 - 255
+     - 'saturation' - Set color saturation (full color bulb type, only), `msg.payload` must contain a number in 0 - 100
+ - *Color String* - If a color string, e.g. "blue" or "rgb(255, 128, 128)" is provided and the command verb "rgb" is 
+    assigned to `msg.command` or `msg.topic` the RGB color can be set. Note, however, for "color" and "bridge" type
+    bulbs the Milight hue will be set, only. For "full color" bulbs the saturation and brightness will be also set.
 
