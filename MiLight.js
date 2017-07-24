@@ -75,10 +75,7 @@ module.exports = function (RED) {
                             light.sendCommands(commands.on(zone), commands.effectSpeedDown(zone));
                             break;
                         case 'white':
-                            light.sendCommands(
-                                commands.on(zone),
-                                commands.whiteMode(zone),
-                                commands.brightness.apply(commands, argsHelper(100)));
+                            light.sendCommands(commands.whiteMode(zone));
                             break;
                         case 'night':
                             light.sendCommands(commands.nightMode(zone));
