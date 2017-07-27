@@ -16,7 +16,7 @@ module.exports = function (RED) {
         }
         var light = new Milight.MilightController({
                 ip: config.ip,
-                delayBetweenCommands: 100,
+                delayBetweenCommands: (config.bridgetype !== 'v6') ? 200 : 100,
                 commandRepeat: 1,
                 type: config.bridgetype,
                 broadcastMode: config.broadcast
@@ -75,10 +75,11 @@ module.exports = function (RED) {
                             light.sendCommands(commands.on(zone), commands.effectSpeedDown(zone));
                             break;
                         case 'white':
-                            light.sendCommands(commands.whiteMode(zone));
+                            light.sendCommands(commands.on(zone), commands.whiteMode(zone));
                             break;
                         case 'night':
-                            light.sendCommands(commands.nightMode(zone));
+                            // nightMode command needs to be sent twice with some bulb types
+                            light.sendCommands(commands.nightMode(zone), commands.nightMode(zone));
                             break;
                         default:
                             var value = Number(msg.payload);
@@ -91,12 +92,16 @@ module.exports = function (RED) {
                             else if (!isNaN(value)) {
                                 if (command === 'brightness')
                                     light.sendCommands(
+                                        commands.on(zone),
                                         commands.brightness.apply(commands, argsHelper(value)));
                                 else if (command === 'color')
                                     light.sendCommands(
+                                        commands.on(zone),
                                         commands.hue.apply(commands, argsHelper(value, true)));
                                 else if (command === 'saturation' && bulb === 'fullColor')
-                                    light.sendCommands(commands.saturation(zone, value, true));
+                                    light.sendCommands(
+                                        commands.on(zone),
+                                        commands.saturation(zone, value, true));
                             }
                             break;
                     }
