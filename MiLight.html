@@ -4,6 +4,7 @@
         color: '#FF6600',
         defaults: {
             name: {value:"MiLight"},
+            bridgetype: {value:"legacy"},
             bulbtype: {value:"white"},
             zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
             ip: {value:"255.255.255.255"},
@@ -24,15 +25,24 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
+        <label for="node-input-bridgetype"> Bridge Type</label>
+        <select id="node-input-bridgetype">
+            <option value="legacy" selected="selected">Legacy</option>
+            <option value="v6">iBox1/iBox2 (v6)</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-bulbtype"> Bulb Type</label>
         <select id="node-input-bulbtype">
             <option value="white" selected="selected">White</option>
             <option value="rgbw">Color</option>
+            <option value="fullColor">Full Color (iBox1/iBox2)</option>
+            <option value="bridge">Bridge Light (iBox2)</option>
         </select>
     </div>
 
     <div class="form-row">
-        <label for="node-input-zone">Default Zone</label>
+        <label for="node-input-zone">Zone</label>
         <input type="text" id="node-input-zone" placeholder="1">
     </div>
     <div class="form-row">
@@ -41,30 +51,39 @@
     </div>
     <div class="form-row">
         <label for="node-input-broadcast">Broadcast</label>
-        <input type="checkbox" id="node-input-broadcast" placeholder="false">
+        <input type="checkbox" id="node-input-broadcast" placeholder="false" style="display: inline-block; width: auto; vertical-align: top;">
     </div>
 </script>
 
 <script type="text/x-red" data-help-name="MiLight">
-    <p>To control the bulb pass the command in to the msg.payload:</p>
+    <p>To control the bulb pass the command to <code>msg.payload</code> as follows:</p>
     <ul>
-        <li>'on' - Turns the bulb on (white and color)</li>
-        <li>'off' - Turns the bulb off (white and color)</li>
-        <li>'white' - Sets a color bulb to white (color bulb only)</li>
-        <li>'disco' - Cycles a bulb through all the colors (color bulb only)</li>
-        <li>(a number not a string range 0 - 255) - Sets the hue of the bulb (color bulb only)</li>
-        <li>(a number not a string range 0 - 100) - Sets the brightness of the bulb (color bulb only)</li>
-        <li>'bright_up' - Increase the brightness of the bulb (white bulb only)</li>
-        <li>'bright_down' - Decrease the brightness of the bulb (white bulb only)</li>
-        <li>'cooler' - Make the bulb cooler (white bulb only)</li>
-        <li>'warmer' - Make the bulb warmer (white bulb only)</li>
-        <li>'bright_max' - Make the bulb brightness maximum (white bulb only)</li>
-        <li>'night' - Turn the night mode (white bulb only)</li>
-    </ul>
-    <p>Important: for setting the brightness and color of the color bulb, <b>msg.command</b> needs to be set as following</p>
-    <ul>
-        <li>'brightness' - Set brightness</li>
-        <li>'color' - Set color</li>
+        <li>'on' - Turns the bulb on (all bulb types)</li>
+        <li>'off' - Turns the bulb off (all bulb types)</li>
+        <li>'night' - Turn the night mode (all bulb types)</li>
+        <li>'white' - Sets a color bulb to white (color bulb types only)</li>
+        <li>'disco' - Cycles a bulb through all the colors (color bulb types, only)</li>
+        <li>'mode' - Cycles through the effect modes (color bulb types only)</li>
+        <li>'speed_up' - Increase the speed of effect mode (color bulb types, only)</li>
+        <li>'speed_down' - Decrease the speed of effect mode (color bulb types, only)</li>
+        <li>'bright_up' - Increase the brightness of the bulb (white bulb, only)</li>
+        <li>'bright_down' - Decrease the brightness of the bulb (white bulb, only)</li>
+        <li>'cooler' - Make the bulb cooler (white bulb, only)</li>
+        <li>'warmer' - Make the bulb warmer (white bulb, only)</li>
+        <li>'bright_max' - Make the bulb brightness maximum (white bulb, only)</li>
+        <li><i>Number</i> - If a number is provided the brightness, color, or saturation value of the
+        color bulb can be controlled by assigning a command verb to <code>msg.command</code>
+        or <code>msg.topic</code> as follows:</li>
+        <ul>
+            <li>'brightness' - Set brightness, <code>msg.payload</code> must contain a number in 0 - 100</li>
+            <li>'color' - Set color, <code>msg.payload</code> must contain a number in 0 - 255</li>
+            <li>'saturation' - Set color saturation (full color bulb type, only), <code>msg.payload</code>
+            must contain a number in 0 - 100</li>
+        </ul>
+        <li><i>Color String</i> - If a color string, e.g. "blue" or "rgb(255, 128, 128)" is provided and
+        the command verb "rgb" is assigned to <code>msg.command</code> or <code>msg.topic</code>
+        the RGB color can be set. Note, however, for "color" and "bridge" type bulbs the Milight hue
+        will be set, only. For "full color" bulbs the saturation and brightness will be also set.</li>
     </ul>
 
 </script>

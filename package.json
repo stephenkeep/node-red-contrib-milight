@@ -19,6 +19,10 @@
     {
       "name": "Bilal Al-Saeedi",
       "email": "bilal_alsaidi@yahoo.com"
+    },
+    {
+      "name": "Marcus Wittig",
+      "email": "wittigmarcus@gmail.com"
     }
   ],
   "author": {
@@ -37,6 +41,7 @@
     }
   },
   "dependencies": {
-    "node-milight-promise": "0.0.9"
+    "color": "^2.0.0",
+    "node-milight-promise": "^0.2.31"
   }
 }

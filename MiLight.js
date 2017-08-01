@@ -1,88 +1,156 @@
-var Milight = require('node-milight-promise').MilightController;
-var whiteCommands = require('node-milight-promise').commands;
-var rgbwCommands = require('node-milight-promise').commands2;
-
 module.exports = function (RED) {
+    "use strict";
+
+    var Milight = require('node-milight-promise');
+    var packageFile = require('./package.json');
+    var Color = require('color');
+
     function node(config) {
 
         RED.nodes.createNode(this, config);
         var node = this;
 
+        // backwards compatibility with previous versions
+        if (config.bridgetype == null || config.bridgetype === '') {
+            config.bridgetype = 'legacy'
+        }
+        var light = new Milight.MilightController({
+                ip: config.ip,
+                delayBetweenCommands: (config.bridgetype !== 'v6') ? 200 : 100,
+                commandRepeat: 1,
+                type: config.bridgetype,
+                broadcastMode: config.broadcast
+            }),
+            zone = Number(config.zone),
+            bulb = config.bulbtype;
+
+        if (config.bridgetype === 'v6') {
+            var commands = Milight.commandsV6[bulb];
+        }
+        else if (bulb === 'white') {
+            var commands = Milight.commands[bulb];
+        }
+        else {
+            var commands = Milight.commands2[bulb];
+        }
+
         this.on('input', function (msg) {
-
-            var light = new Milight({
-                    ip: config.ip,
-                    delayBetweenCommands: config.bulbtype === 'rgbw' ? 50 : 100,
-                    commandRepeat: config.bulbtype === 'rgbw' ? 2 : 1
-                }),
-                zone = config.zone,
-                bulb = config.bulbtype;
-
-            //i know this is private but its the only way i could get it to work
-            light._broadcastMode = config.broadcast;
-            var command = msg.command;
-
-            if (bulb === 'rgbw') {
-                switch (msg.payload) {
-                    case 'off':
-                        light.sendCommands(rgbwCommands[bulb].off(zone));
-                        break;
-                    case 'on':
-                        light.sendCommands(rgbwCommands[bulb].on(zone));
-                        break;
-                    case 'disco':
-                        light.sendCommands(rgbwCommands.rgbw.on(zone));
-                        for (var x = 0; x < 256; x += 5) {
-                            light.sendCommands(rgbwCommands.rgbw.hue(x));
-                            light.pause(100);
-                        }
-                        break;
-                    case  'white':
-                        light.sendCommands(rgbwCommands.rgbw.on(zone), rgbwCommands.rgbw.brightness(100), rgbwCommands.rgbw.whiteMode(zone));
-                        break;
-                    default:
-                        if (!isNaN(msg.payload)) {
-                            if (command === 'brightness')
-                                light.sendCommands(rgbwCommands.rgbw.brightness(msg.payload));
-                            else if (command === 'color')
-                                light.sendCommands(rgbwCommands.rgbw.hue(msg.payload));
-                        }
-                        break;
+            function argsHelper(vargs) {
+                var argsArray = [].slice.call(arguments);
+                if (config.bridgetype === 'v6' && bulb !== 'bridge') {
+                    return [zone].concat(argsArray);
                 }
-            } else {
-                switch (msg.payload) {
-                    case 'off':
-                        light.sendCommands(whiteCommands[bulb].off(zone));
-                        break;
-                    case 'on':
-                        light.sendCommands(whiteCommands[bulb].on(zone));
-                        break;
-                    case 'bright_up':
-                        light.sendCommands(whiteCommands[bulb].brightUp(zone));
-                        break;
-                    case 'bright_down':
-                        light.sendCommands(whiteCommands[bulb].brightDown(zone));
-                        break;
-                    case 'cooler':
-                        light.sendCommands(whiteCommands[bulb].cooler(zone));
-                        break;
-                    case 'warmer':
-                        light.sendCommands(whiteCommands[bulb].warmer(zone));
-                        break;
-                    case 'bright_max':
-                        light.sendCommands(whiteCommands[bulb].maxBright(zone));
-                        break;
-                    case 'night':
-                        light.sendCommands(whiteCommands[bulb].nightMode(zone));
-                        break;
-                }
+                return argsArray;
             }
 
-            light.close().then(function () {
-
+            light.ready().then(function () {
+                var command = msg.command ? msg.command : msg.topic;
+                if (commands == null) {
+                    node.error("Selected combination of bridge type and bulb type is not supported");
+                    return;
+                }
+                if (bulb !== 'white') {
+                    switch (msg.payload) {
+                        case 'off':
+                            light.sendCommands(commands.off(zone));
+                            break;
+                        case 'on':
+                            light.sendCommands(commands.on(zone));
+                            break;
+                        case 'disco':
+                            light.sendCommands(commands.on(zone));
+                            for (var x = 0; x < 256; x += 5) {
+                                light.sendCommands(
+                                    commands.hue.apply(commands, argsHelper(x)));
+                                light.pause(100);
+                            }
+                            break;
+                        case 'mode':
+                            light.sendCommands(commands.on(zone), commands.effectModeNext(zone));
+                            break;
+                        case 'speed_up':
+                            light.sendCommands(commands.on(zone), commands.effectSpeedUp(zone));
+                            break;
+                        case 'speed_down':
+                            light.sendCommands(commands.on(zone), commands.effectSpeedDown(zone));
+                            break;
+                        case 'white':
+                            light.sendCommands(commands.on(zone), commands.whiteMode(zone));
+                            break;
+                        case 'night':
+                            // nightMode command needs to be sent twice with some bulb types
+                            light.sendCommands(commands.nightMode(zone), commands.nightMode(zone));
+                            break;
+                        default:
+                            var value = Number(msg.payload);
+                            if (command === 'rgb') {
+                                var color = new Color(msg.payload);
+                                var args = argsHelper.apply(node, color.rgb().array());
+                                light.sendCommands(commands.on(zone),
+                                    commands.rgb.apply(commands, args));
+                            }
+                            else if (!isNaN(value)) {
+                                if (command === 'brightness')
+                                    light.sendCommands(
+                                        commands.on(zone),
+                                        commands.brightness.apply(commands, argsHelper(value)));
+                                else if (command === 'color')
+                                    light.sendCommands(
+                                        commands.on(zone),
+                                        commands.hue.apply(commands, argsHelper(value, true)));
+                                else if (command === 'saturation' && bulb === 'fullColor')
+                                    light.sendCommands(
+                                        commands.on(zone),
+                                        commands.saturation(zone, value, true));
+                            }
+                            break;
+                    }
+                } else {
+                    switch (msg.payload) {
+                        case 'off':
+                            light.sendCommands(commands.off(zone));
+                            break;
+                        case 'on':
+                            light.sendCommands(commands.on(zone));
+                            break;
+                        case 'bright_up':
+                            light.sendCommands(commands.brightUp(zone));
+                            break;
+                        case 'bright_down':
+                            light.sendCommands(commands.brightDown(zone));
+                            break;
+                        case 'cooler':
+                            light.sendCommands(commands.cooler(zone));
+                            break;
+                        case 'warmer':
+                            light.sendCommands(commands.warmer(zone));
+                            break;
+                        case 'bright_max':
+                            light.sendCommands(commands.maxBright(zone));
+                            break;
+                        case 'night':
+                            light.sendCommands(commands.nightMode(zone));
+                            break;
+                    }
+                }
+            }).catch(function (error) {
+                node.error('Milight error: ' + error);
             });
+        });
+
+        this.on('close', function (done) {
+            light.close()
+                .catch(function (error) {
+                    // just log the error as a normal log message 
+                    // as it is safe to ignore the error at this point
+                    node.log(error)
+                })
+                .finally(function () {
+                    done()
+                });
         });
     }
 
     RED.nodes.registerType("MiLight", node);
+    RED.log.info(packageFile.name + '@' + packageFile.version + ' started');
 };
