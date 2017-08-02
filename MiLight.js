@@ -3,7 +3,7 @@ module.exports = function (RED) {
 
     var Milight = require('node-milight-promise');
     var packageFile = require('./package.json');
-    var Color = require('color');
+    var Color = require('tinycolor2');
 
     function node(config) {
 
@@ -41,6 +41,11 @@ module.exports = function (RED) {
                     return [zone].concat(argsArray);
                 }
                 return argsArray;
+            }
+            function getSelectedObjectValues(sourceObject, keys) {
+                var values = [];
+                keys.forEach(function(key) { values.push(sourceObject[key]) });
+                return values;
             }
 
             light.ready().then(function () {
@@ -85,9 +90,16 @@ module.exports = function (RED) {
                             var value = Number(msg.payload);
                             if (command === 'rgb') {
                                 var color = new Color(msg.payload);
-                                var args = argsHelper.apply(node, color.rgb().array());
-                                light.sendCommands(commands.on(zone),
-                                    commands.rgb.apply(commands, args));
+                                if (color.isValid()) {
+                                    var args = argsHelper.apply(
+                                        node,
+                                        getSelectedObjectValues(color.toRgb(), ['r', 'g', 'b']));
+                                    light.sendCommands(commands.on(zone),
+                                        commands.rgb.apply(commands, args));
+                                }
+                                else {
+                                    throw(new Error("Invalid color value: " + msg.payload))
+                                }
                             }
                             else if (!isNaN(value)) {
                                 if (command === 'brightness')
