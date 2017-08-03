@@ -86,6 +86,9 @@ module.exports = function (RED) {
                             // nightMode command needs to be sent twice with some bulb types
                             light.sendCommands(commands.nightMode(zone), commands.nightMode(zone));
                             break;
+                        case 'temperature':
+                            light.sendCommands(commands.whiteTemperature(zone), commands.whiteTemperature(zone));
+                            break;
                         default:
                             var value = Number(msg.payload);
                             if (command === 'rgb') {
