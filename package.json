@@ -37,7 +37,7 @@
   ],
   "node-red": {
     "nodes": {
-      "MiLight": "MiLight.js"
+      "MiLight": "milight.js"
     }
   },
   "dependencies": {

@@ -69,8 +69,8 @@ module.exports = function (RED) {
                                     commands.hue.apply(commands, argsHelper(x)));
                                 light.pause(100);
                             }
-                            break;
-                        case 'mode':
+                            break;      
+                        case 'modenext':
                             light.sendCommands(commands.on(zone), commands.effectModeNext(zone));
                             break;
                         case 'speed_up':
@@ -85,6 +85,67 @@ module.exports = function (RED) {
                         case 'night':
                             // nightMode command needs to be sent twice with some bulb types
                             light.sendCommands(commands.nightMode(zone), commands.nightMode(zone));
+                            break;
+                        case 'candleflicker':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 1));
+                            }
+                            break;
+                        case 'rainbowfade':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 2));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 8));
+                            }
+                            break;
+                        case 'whitefade':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 3));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 1));
+                            }
+                            break;
+                        case 'rgbwfade':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 4));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 2));
+                            }
+                            break;
+                        case 'rainbow':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 5));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 3));
+                            }
+                            break;
+                        case 'random':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 6));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 4));
+                            }
+                            break;
+                        case 'redflash':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 7));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 5));
+                            }
+                            break;
+                        case 'greenflash':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 8));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 6));
+                            }
+                            break;
+                        case 'blueflash':
+                            if (bulb === 'fullColor') {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 9));
+                            } else {
+                                light.sendCommands(commands.on(zone), commands.effectMode(zone, 7));
+                            }
                             break;
                         default:
                             var value = Number(msg.payload);
@@ -114,6 +175,10 @@ module.exports = function (RED) {
                                     light.sendCommands(
                                         commands.on(zone),
                                         commands.saturation(zone, value, true));
+                                else if (command === 'temperature' && bulb === 'fullColor')
+                                    light.sendCommands(
+                                        commands.on(zone),
+                                        commands.whiteTemperature(zone, value));      
                             }
                             break;
                     }
@@ -163,6 +228,6 @@ module.exports = function (RED) {
         });
     }
 
-    RED.nodes.registerType("MiLight", node);
+    RED.nodes.registerType("milight", node);
     RED.log.info(packageFile.name + '@' + packageFile.version + ' started');
 };

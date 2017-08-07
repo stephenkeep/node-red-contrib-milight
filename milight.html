@@ -1,9 +1,9 @@
 <script type="text/javascript">
-    RED.nodes.registerType('MiLight',{
+    RED.nodes.registerType('milight',{
         category: 'lights',
         color: '#FF6600',
         defaults: {
-            name: {value:"MiLight"},
+            name: {value:"milight"},
             bridgetype: {value:"legacy"},
             bulbtype: {value:"white"},
             zone: {value:1,oneditsave:function(){this.zone=parseInt(this.zone)}},
@@ -14,12 +14,12 @@
         outputs:0,
         icon: "light.png",
         label: function() {
-            return this.name||"MiLight";
+            return this.name||"milight";
         }
     });
 </script>
 
-<script type="text/x-red" data-template-name="MiLight">
+<script type="text/x-red" data-template-name="milight">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -55,22 +55,31 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="MiLight">
-    <p>To control the bulb pass the command to <code>msg.payload</code> as follows:</p>
+<script type="text/x-red" data-help-name="milight">
+    <p>Controls MiLight bulbs and their OEM equivalents. To control the bulb pass one of the following commands to <code>msg.payload</code>:</p>
     <ul>
-        <li>'on' - Turns the bulb on (all bulb types)</li>
-        <li>'off' - Turns the bulb off (all bulb types)</li>
-        <li>'night' - Turn the night mode (all bulb types)</li>
-        <li>'white' - Sets a color bulb to white (color bulb types only)</li>
-        <li>'disco' - Cycles a bulb through all the colors (color bulb types, only)</li>
-        <li>'mode' - Cycles through the effect modes (color bulb types only)</li>
-        <li>'speed_up' - Increase the speed of effect mode (color bulb types, only)</li>
-        <li>'speed_down' - Decrease the speed of effect mode (color bulb types, only)</li>
-        <li>'bright_up' - Increase the brightness of the bulb (white bulb, only)</li>
-        <li>'bright_down' - Decrease the brightness of the bulb (white bulb, only)</li>
-        <li>'cooler' - Make the bulb cooler (white bulb, only)</li>
-        <li>'warmer' - Make the bulb warmer (white bulb, only)</li>
-        <li>'bright_max' - Make the bulb brightness maximum (white bulb, only)</li>
+        <li>'on' - Turns the bulb on. (all bulb types)</li>
+        <li>'off' - Turns the bulb off. (all bulb types)</li>
+        <li>'night' - Turn the night mode. (all bulb types)</li>
+        <li>'white' - Sets a color bulb to white. (color bulb types only)</li>
+        <li>'disco' - Cycles a bulb through all the colors. (color bulb types only)</li>
+        <li>'modenext' - Cycles through the effect modes. (color bulb types only)</li>
+        <li>'candleflicker' - Starts the candle flicker effect mode. (full color bulb only)</li>
+        <li>'rainbowfade' - Starts the rainbow fade effect, which fades between colors. (color bulbs only)</li>
+        <li>'whitefade' - Fades from full on white to off then back again. On full color bulbs fades smoothly between warm and cool white. (color bulbs only)</li>
+        <li>'rgbwfade' - Fades smoothly between colors. (color bulbs only)</li>
+        <li>'rainbow' - Changes the color of the bulb through a sequence of colors. (color bulbs only)</li>
+        <li>'random' - Randomly changes the color of the bulb. (color bulbs only)</li>
+        <li>'redflash' - Fades the bulb from off to full red, then flashes red three times. (color bulbs only)</li>
+        <li>'greenflash' - Fades the bulb from off to full green, then flashes green three times. (color bulbs only)</li>
+        <li>'blueflash' - Fades the bulb from off to full blue, then flashes blue three times. (color bulbs only)</li>
+        <li>'speed_up' - Increase the speed of effect mode. (color bulb types only)</li>
+        <li>'speed_down' - Decrease the speed of effect mode. (color bulb types only)</li>
+        <li>'bright_up' - Increase the brightness of the bulb. (white bulb only)</li>
+        <li>'bright_down' - Decrease the brightness of the bulb. (white bulb only)</li>
+        <li>'cooler' - Make the bulb cooler. (white bulb only)</li>
+        <li>'warmer' - Make the bulb warmer. (white bulb only)</li>
+        <li>'bright_max' - Make the bulb brightness maximum. (white bulb only)</li>
         <li><i>Number</i> - If a number is provided the brightness, color, or saturation value of the
         color bulb can be controlled by assigning a command verb to <code>msg.command</code>
         or <code>msg.topic</code> as follows:</li>
@@ -79,6 +88,8 @@
             <li>'color' - Set color, <code>msg.payload</code> must contain a number in 0 - 255</li>
             <li>'saturation' - Set color saturation (full color bulb type, only), <code>msg.payload</code>
             must contain a number in 0 - 100</li>
+            <li>'temperature' - Set white color temperature (full color bulb only), <code>msg.paylod</code> contains
+            a value between 0 - 100, where 0 is 2700 K and 100 is 6500 K.</li>
         </ul>
         <li><i>Color String</i> - If a color string, e.g. "blue" or "rgb(255, 128, 128)" is provided and
         the command verb "rgb" is assigned to <code>msg.command</code> or <code>msg.topic</code>
