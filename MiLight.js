@@ -110,7 +110,7 @@ module.exports = function (RED) {
                                     light.sendCommands(
                                         commands.on(zone),
                                         commands.hue.apply(commands, argsHelper(value, true)));
-                                else if (command === 'temperature')
+                                else if (command === 'temperature' && bulb === 'fullColor' )
                                     light.sendCommands(
                                         commands.on(zone),
                                         commands.whiteTemperature.apply(commands, argsHelper(value)));
